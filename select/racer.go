@@ -8,24 +8,24 @@ import (
 
 var tenSecondTimeout = 10 * time.Second
 
-func Racer(a, b string)(winner string, err error){
+func Racer(a, b string) (winner string, err error) {
 	return ConfigurableRacer(a, b, tenSecondTimeout)
 }
 
-func ConfigurableRacer(a, b string, timeout time.Duration)(winner string, err error){
-	select{
-	case <- ping(a):
+func ConfigurableRacer(a, b string, timeout time.Duration) (winner string, err error) {
+	select {
+	case <-ping(a):
 		return a, nil
-	case <- ping(b):
+	case <-ping(b):
 		return b, nil
-	case <- time.After(timeout):
+	case <-time.After(timeout):
 		return "", fmt.Errorf("timed out waiting for %s and %s", a, b)
 	}
 }
 
-func ping(url string) chan struct{}{
+func ping(url string) chan struct{} {
 	ch := make(chan struct{})
-	go func(){
+	go func() {
 		http.Get(url)
 		close(ch)
 	}()
